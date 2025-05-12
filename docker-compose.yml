@@ -1,0 +1,48 @@
+version: '3.8'
+
+services:
+  apache1:
+    build:
+      context: .
+      args:
+        CONTAINER_NO: 1
+    container_name: apache-container-1
+    networks:
+      - apache-net
+
+  apache2:
+    build:
+      context: .
+      args:
+        CONTAINER_NO: 2
+    container_name: apache-container-2
+    networks:
+      - apache-net
+
+  apache3:
+    build:
+      context: .
+      args:
+        CONTAINER_NO: 3
+    container_name: apache-container-3
+    networks:
+      - apache-net
+
+  nginx:
+    image: nginx
+    container_name: nginx
+    depends_on:
+      - apache1
+      - apache2
+      - apache3
+    ports:
+      - "8080:80"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+    networks:
+      - apache-net
+
+networks:
+  apache-net:
+    driver: bridge
+
