@@ -94,6 +94,43 @@ docker-compose up -d --build
 
 ---
 
+## 📸 Output
+
+Below are screenshots from various stages of the project:
+
+### ✅ Shell Script Installation Output
+![image](https://github.com/user-attachments/assets/cb37fc7a-a89f-4e03-96fe-98ba8870712a)
+
+
+### ✅ Docker Containers Running
+![image](https://github.com/user-attachments/assets/d25c3b60-9e84-44f4-824e-aefa25f10f50)
+
+
+### ✅ Web App via NGINX Load Balancer
+![Screenshot 2025-05-13 133450](https://github.com/user-attachments/assets/3e6494b3-b4f0-4db4-b4f6-2ae312caec27)
+![Screenshot 2025-05-13 133457](https://github.com/user-attachments/assets/3a282011-0a38-4e69-ad88-140d9ee002c1)
+![Screenshot 2025-05-13 133512](https://github.com/user-attachments/assets/82b8995b-645e-4162-95e8-fb966ea789ba)
+
+### ✅ Checking Load Balancing via curl
+![Screenshot 2025-05-13 133641](https://github.com/user-attachments/assets/69a95584-ac94-407b-acaf-f790e473eb59)
+
+
+### ✅ Jenkins Job Console Output
+![image](https://github.com/user-attachments/assets/0e36d7db-6446-4fff-8df5-a976bb595c95)
+![image](https://github.com/user-attachments/assets/6579d18b-08c9-4137-8d5b-378e9aa1a3c2)
+
+
+### ✅ Changes in the code is reflected through Jenkins CI/CD pipeline
+![image](https://github.com/user-attachments/assets/94b460d0-d155-4890-8640-5b2652c6aac1)
+![image](https://github.com/user-attachments/assets/84204063-e725-457d-9b74-f933806f71ec)
+![Screenshot 2025-05-13 132925](https://github.com/user-attachments/assets/9272f3c0-aecd-43bd-8452-9fddabfaf7a4)
+![Screenshot 2025-05-13 132948](https://github.com/user-attachments/assets/bd96d612-10e7-42fe-af73-b802f759d70e)
+![Screenshot 2025-05-13 132955](https://github.com/user-attachments/assets/de774467-0bec-4b5e-997e-463c4d73b206)
+
+
+
+---
+
 ## ✅ Final Notes
 
 - Project is fully automated and ready to deploy.
