@@ -28,7 +28,7 @@ This project demonstrates a complete DevOps workflow including Dockerization, CI
 ### 1️⃣ Clone & Setup
 
 ```bash
-git clone <your-repo-url>
+git clone https://github.com/d-Akkya/task-ci-cd.git
 cd task-ci-cd
 git checkout develop
 ```
@@ -40,8 +40,7 @@ git checkout develop
 > Automates installation of essential tools via a shell script.
 
 ```bash
-chmod +x configuration_management.sh
-./configuration_management.sh
+bash configuration_management.sh
 ```
 
 **Tools Installed:**
@@ -80,7 +79,7 @@ docker-compose up -d --build
    - Build Triggers: GitHub Webhook  
    - Build Steps:
      ```bash
-     cd /your/project/path
+     cd task-ci-cd
      git pull origin develop
      docker-compose down
      docker-compose up -d --build
@@ -90,7 +89,7 @@ docker-compose up -d --build
    - Go to your repo → Settings → Webhooks → Add webhook  
    - Use URL:  
      ```
-     http://<your-jenkins-ip>:8080/github-webhook/
+     http://<jenkins-ip>:8080/github-webhook/
      ```
 
 ---
