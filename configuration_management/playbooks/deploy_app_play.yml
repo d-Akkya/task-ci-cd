@@ -1,0 +1,55 @@
+-
+  name: Deploy multi-container Apache + NGINX app
+  hosts: server
+  become: yes
+  vars:
+    app_repo: "https://github.com/d-Akkya/task-ci-cd.git"
+    app_dest: "/opt/apache-nginx-app"
+
+  tasks:
+
+    - name: Ensure required packages are installed
+      apt:
+        name: "{{ item }}"
+        state: present
+        update_cache: yes
+      loop:
+        - git
+        - docker.io
+        - docker-compose
+
+    - name: Clone application repository
+      git:
+        repo: "{{ app_repo }}"
+        dest: "{{ app_dest }}"
+        version: main
+
+    - name: Copy nginx.conf to destination if not in repo
+      copy:
+        src: "{{ app_dest }}/nginx.conf"
+        dest: "{{ app_dest }}/nginx.conf"
+        remote_src: yes
+      when: not lookup('file', app_dest + '/nginx.conf', errors='ignore') | bool
+
+    - name: Bring up containers using Docker Compose
+      command: docker-compose up -d
+      args:
+        chdir: "{{ app_dest }}"
+
+    - name: Check if all containers are running
+      shell: docker ps --filter "status=running" --format "{{'{{'}}.Names{{'}}'}}"
+      register: running_containers
+
+    - name: Assert required containers are running
+      assert:
+       that:
+         - "'apache-container-1' in running_containers.stdout_lines"
+         - "'apache-container-2' in running_containers.stdout_lines"
+         - "'apache-container-3' in running_containers.stdout_lines"
+         - "'nginx' in running_containers.stdout_lines"
+
+    - name: Check if NGINX is serving traffic
+      uri:
+        url: http://localhost:8000
+        return_content: yes
+        status_code: 200

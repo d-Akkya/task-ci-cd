@@ -1,0 +1,12 @@
+-
+  name: Check Services Health (is active and running)
+  hosts: localhost,server
+  tasks:
+    - name: Copy service_health_check.sh to remote
+      copy:
+        src: "{{ playbook_dir }}/../service_health_check.sh"
+        dest: /tmp/service_health_check.sh
+        mode: '0755'
+
+    - name: Run service health check script
+      shell: bash /tmp/service_health_check.sh
