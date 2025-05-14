@@ -1,0 +1,99 @@
+-
+  name: Install Docker, Docker-compose, Jenkins and Nginx (if not present)
+  hosts: localhost
+  become: yes
+  tasks: # =============================== Docker Installation ================================================
+    - name: Check if Docker is installed
+      command: docker --version
+      register: docker_check
+      ignore_errors: yes
+
+    - name: Install Docker
+      apt:
+        name: docker.io
+        state: present
+        update_cache: yes
+      when: docker_check.rc != 0
+
+# ==================== Docker-compose Installation ========================================
+
+    - name: Check if Docker-Compose is already installed
+      stat:
+        path: /usr/local/bin/docker-compose
+      register: docker_compose_status
+    - name: Install Docker Compose
+      when: not docker_compose_status.stat.exists
+      get_url:
+        url: https://github.com/docker/compose/releases/download/v2.24.6/docker-compose-{{ ansible_system | lower }}-{{ ansible_architecture }}
+        dest: /usr/local/bin/docker-compose
+        mode: '0755'
+
+# ====================== Jenkins Installation ===================================
+    - name: Check if Jenkins is installed
+      stat:
+        path: /etc/init.d/jenkins
+      register: jenkins_check
+
+
+    - name: Add Jenkins repository GPG key
+      ansible.builtin.get_url:
+        url: https://pkg.jenkins.io/debian-stable/jenkins.io-2023.key
+        dest: /usr/share/keyrings/jenkins-keyring.asc
+        mode: '0644'
+      when: not jenkins_check.stat.exists
+
+    - name: Add Jenkins APT repository
+      ansible.builtin.apt_repository:
+        repo: "deb [signed-by=/usr/share/keyrings/jenkins-keyring.asc] https://pkg.jenkins.io/debian-stable binary/"
+        state: present
+        filename: 'jenkins'
+      when: not jenkins_check.stat.exists
+
+
+    - name: Install Java (required for Jenkins)
+      apt:
+        name: openjdk-21-jre
+        state: present
+        update_cache: yes
+      when: not jenkins_check.stat.exists
+
+    - name: Install Jenkins
+      apt:
+        name: jenkins
+        state: present
+        update_cache: yes
+      when: not jenkins_check.stat.exists
+
+    - name: Fix Jenkins ownership - cache
+      ansible.builtin.file:
+        path: /var/cache/jenkins
+        owner: jenkins
+        group: jenkins
+        recurse: yes
+
+    - name: Fix Jenkins ownership - log
+      ansible.builtin.file:
+        path: /var/log/jenkins
+        owner: jenkins
+        group: jenkins
+        recurse: yes
+
+    - name: Restart Jenkins service
+      service:
+        name: jenkins
+        state: restarted
+        enabled: yes
+
+# ========================== Nginx Installation ======================================================
+
+    - name: Check if NGINX is already installed
+      command: nginx -v
+      register: nginx_check
+      ignore_errors: yes
+
+    - name: Install Nginx
+      apt:
+        name: nginx
+        state: latest
+        update_cache: yes
+      when: nginx_check.rc != 0
