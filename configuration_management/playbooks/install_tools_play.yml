@@ -64,12 +64,25 @@
         update_cache: yes
       when: not jenkins_check.stat.exists
 
-    - name: Ensure Jenkins is started and enabled
-      ansible.builtin.service:
+    - name: Fix Jenkins ownership - cache
+      ansible.builtin.file:
+        path: /var/cache/jenkins
+        owner: jenkins
+        group: jenkins
+        recurse: yes
+
+    - name: Fix Jenkins ownership - log
+      ansible.builtin.file:
+        path: /var/log/jenkins
+        owner: jenkins
+        group: jenkins
+        recurse: yes
+
+    - name: Restart Jenkins service
+      service:
         name: jenkins
-        state: started
+        state: restarted
         enabled: yes
-      when: not jenkins_check.stat.exists
 
 # ========================== Nginx Installation ======================================================
 
