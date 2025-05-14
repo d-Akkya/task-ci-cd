@@ -5,7 +5,7 @@ ARG CONTAINER_NO
 
 WORKDIR /app
 
-RUN echo "<html><body><h1>Hello from Apache - Container $CONTAINER_NO</h1></body></html>" > index.html
+RUN echo "<html><body><h1>Hello from Rohith - Container $CONTAINER_NO</h1></body></html>" > index.html
 
 # ================================== Stage 2: Final Image ================================================
 FROM httpd:alpine
