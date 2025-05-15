@@ -1,12 +1,16 @@
 -
-  name: Check Services Health (is active and running)
-  hosts: localhost,server
+  name: Schedule service health check every 30 minutes
+  hosts: localhost
   tasks:
-    - name: Copy service_health_check.sh to remote
-      copy:
-        src: "{{ playbook_dir }}/../service_health_check.sh"
-        dest: /tmp/service_health_check.sh
+    - name: Ensure log directory exists
+      file:
+        path: /home/ubuntu/task-ci-cd/configuration_management/log/service_health
+        state: directory
         mode: '0755'
 
-    - name: Run service health check script
-      shell: bash /tmp/service_health_check.sh
+    - name: Create cron job for health check
+      cron:
+        name: "Service Health Check"
+        minute: "*/30"
+        job: 'bash /home/ubuntu/task-ci-cd/configuration_management/service_health_check.sh'
+

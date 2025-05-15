@@ -1,0 +1,40 @@
+-
+  name: Monitor health of containers and nginx traffic
+  hosts: localhost, server
+  become: yes
+  tasks:
+    - name: Ensure log directories exist
+      file:
+        path: "{{ item }}"
+        state: directory
+        mode: '0755'
+        owner: ubuntu
+        group: ubuntu
+      loop:
+        - /home/ubuntu/task-ci-cd/logs/containers_health
+        - /home/ubuntu/task-ci-cd/logs/nginx_traffic_check
+
+    - name: Create cron job for container health check
+      cron:
+        name: "Container Health Check"
+        minute: "*/30"
+        user: ubuntu
+        job: >
+          docker ps -a --format 'table {{.Names}}\t{{.Status}}\t{{.Ports}}' >
+          /home/ubuntu/task-ci-cd/configuration_management/log/containers_health/containers_$(date +\%F_\%H-\%M).log 2>&1
+      when: 
+        - ansible_facts.services['docker.service'] is defined
+
+    - name: Create cron job for NGINX check (if installed)
+      cron:
+        name: "NGINX Traffic Check"
+        minute: "*/30"
+        user: ubuntu
+        job: >
+          curl -v http://localhost:80 >
+          /home/ubuntu/task-ci-cd/configuration_management/log/nginx_traffic_check/nginx_$(date +\%F_\%H-\%M).log 2>&1
+        rescue:
+          - name: Log failure
+            shell: echo "Health check failed" >> /home/ubuntu/task-ci-cd/configuration_management/log/nginx_traffic_check/check_failed.log
+      when: 
+        - ansible_facts.services['nginx.service'] is defined
